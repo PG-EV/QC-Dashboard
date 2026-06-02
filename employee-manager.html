@@ -675,26 +675,30 @@
     }
 
     function createDefaultEmployeeRows(employeeName) {
-      const year = new Date().getFullYear();
-      return MONTHS.map(month => ({
-        employee_name: employeeName,
-        Month: month,
-        Year: year,
-        "Quality(%)": 0,
-        "Extra Processed counts": 0,
-        "Leaves": 0,
-        "no_of_WFH": 0,
-        "Pending(whole month)": 0,
-        "Number of days reached minimum count at 6pm": 0,
-        avg_6pm: 0,
-        days_below_bench: 0,
-        professionalism: "Average",
-        communication: "Average",
-        negative_remarks: "",
-        positive_remarks: "",
-        takeaway: ""
-      }));
-    }
+  const year = new Date().getFullYear();
+
+  return [
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
+  ].map(month => ({
+    employee_name: employeeName,
+    Month: month,
+    Year: year,
+    "Quality(%)": 0,
+    "Extra Processed counts": 0,
+    "Leaves": 0,
+    "no_of_WFH": 0,
+    "Pending(whole month)": 0,
+    "Number of days reached minimum count at 6pm": 0,
+    avg_6pm: 0,
+    days_below_bench: 0,
+    professionalism: "Average",
+    communication: "Average",
+    negative_remarks: "",
+    positive_remarks: "",
+    takeaway: ""
+  }));
+}
 
     function sortEmployeeIds(ids) {
       return [...ids].sort((a, b) => {
