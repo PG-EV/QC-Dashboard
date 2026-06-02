@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  />
+  <title>Employee Manager</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --primary:#0f766e;
+      --primary-hover:#115e59;
+      --danger:#dc2626;
+      --danger-hover:#b91c1c;
+      --warning:#d97706;
+      --warning-hover:#b45309;
+      --success:#16a34a;
+      --success-bg:#f0fdf4;
+      --shadow:0 10px 28px rgba(2, 8, 23, 0.08);
+      --radius:16px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Inter', sans-serif;
+      min-height:100%;
+    }
+
+    .page{
+      max-width:1200px;
+      margin:0 auto;
+      padding:28px 18px 40px;
+    }
+
+    .topbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .title-wrap h1{
+      margin:0;
+      font-size:1.8rem;
+      font-weight:800;
+      letter-spacing:-0.03em;
+    }
+
+    .title-wrap p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .status-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--border);
+      background:var(--card);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:.88rem;
+      font-weight:600;
+      box-shadow:var(--shadow);
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#94a3b8;
+    }
+    .dot.online{ background:#22c55e; }
+    .dot.offline{ background:#ef4444; }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap:18px;
+    }
+
+    @media(max-width: 980px){
+      .layout{
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .card-header{
+      padding:18px 18px 12px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .card-header h2{
+      margin:0;
+      font-size:1rem;
+      font-weight:800;
+      letter-spacing:-0.02em;
+    }
+
+    .card-body{
+      padding:16px 18px 18px;
+    }
+
+    .controls{
+      display:grid;
+      gap:12px;
+    }
+
+    .field{
+      display:grid;
+      gap:6px;
+    }
+
+    .field label{
+      font-size:.78rem;
+      font-weight:700;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+
+    .input,
+    .textarea,
+    .select{
+      width:100%;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:12px 14px;
+      font:inherit;
+      color:var(--text);
+      outline:none;
+      transition:.18s ease;
+    }
+
+    .textarea{
+      resize:vertical;
+      min-height:90px;
+    }
+
+    .input:focus,
+    .textarea:focus,
+    .select:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px rgba(15, 118, 110, 0.12);
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:11px 14px;
+      font:inherit;
+      font-size:.92rem;
+      font-weight:700;
+      cursor:pointer;
+      transition:.18s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .btn:hover{ transform:translateY(-1px); }
+
+    .btn-primary{
+      background:var(--primary);
+      color:white;
+    }
+    .btn-primary:hover{
+      background:var(--primary-hover);
+    }
+
+    .btn-outline{
+      background:white;
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+    .btn-outline:hover{
+      border-color:var(--primary);
+      color:var(--primary);
+    }
+
+    .btn-danger{
+      background:var(--danger);
+      color:#fff;
+    }
+    .btn-danger:hover{
+      background:var(--danger-hover);
+    }
+
+    .btn-warning{
+      background:var(--warning);
+      color:#fff;
+    }
+    .btn-warning:hover{
+      background:var(--warning-hover);
+    }
+
+    .btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .list-top{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .employee-list{
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      min-height:360px;
+      max-height:70vh;
+      overflow-y:auto;
+    }
+
+    .emp-item{
+      padding:14px 14px;
+      border-bottom:1px solid var(--border);
+      cursor:pointer;
+      transition:.15s ease;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+
+    .emp-item:last-child{
+      border-bottom:none;
+    }
+
+    .emp-item:hover{
+      background:#f8fafc;
+    }
+
+    .emp-item.active{
+      background:#ecfeff;
+      border-left:4px solid var(--primary);
+      padding-left:10px;
+    }
+
+    .emp-main{
+      min-width:0;
+    }
+
+    .emp-name{
+      font-weight:700;
+      font-size:.96rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .emp-meta{
+      margin-top:5px;
+      color:var(--muted);
+      font-size:.82rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:3px 9px;
+      font-size:.75rem;
+      font-weight:700;
+      color:var(--muted);
+      background:#fff;
+    }
+
+    .empty{
+      color:var(--muted);
+      text-align:center;
+      padding:30px 18px;
+      font-size:.92rem;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    @media(max-width: 620px){
+      .summary-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .summary-card{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+      background:#fff;
+    }
+
+    .summary-label{
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      font-size:.75rem;
+      font-weight:800;
+    }
+
+    .summary-value{
+      margin-top:6px;
+      font-size:1.1rem;
+      font-weight:800;
+    }
+
+    .months-box{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+      background:#fff;
+      max-height:280px;
+      overflow:auto;
+    }
+
+    .months-box h3{
+      margin:0 0 12px;
+      font-size:.95rem;
+    }
+
+    .month-list{
+      display:grid;
+      gap:8px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+
+    .month-item{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:.9rem;
+    }
+
+    .helper{
+      font-size:.85rem;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .toast{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      background:#0f172a;
+      color:white;
+      padding:12px 16px;
+      border-radius:12px;
+      box-shadow:0 15px 30px rgba(0,0,0,.22);
+      opacity:0;
+      transform:translateY(10px);
+      pointer-events:none;
+      transition:.22s ease;
+      z-index:9999;
+      font-weight:700;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .save-banner{
+      margin-top:10px;
+      border:1px solid #bbf7d0;
+      background:var(--success-bg);
+      color:#166534;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:.88rem;
+      font-weight:700;
+      display:none;
+    }
+
+    .save-banner.show{
+      display:block;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="title-wrap">
+        <h1>Employee Name Manager</h1>
+        <p>View, add, rename, and delete employees from your GitHub-hosted app.</p>
+      </div>
+
+      <div class="status-chip">
+        <span id="statusDot" class="dot"></span>
+        <span id="statusText">Checking connection...</span>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT PANEL -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Employees</h2>
+          <span class="pill" id="employeeCount">0 employees</span>
+        </div>
+
+        <div class="card-body">
+          <div class="list-top">
+            <input
+              id="searchInput"
+              class="input"
+              type="text"
+              placeholder="Search employee..."
+              oninput="renderEmployeeList()"
+            />
+          </div>
+
+          <div id="employeeList" class="employee-list">
+            <div class="empty">Loading employees...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Manage Employee</h2>
+          <div class="toolbar">
+            <button class="btn btn-outline" onclick="loadEmployees()">Refresh</button>
+            <button class="btn btn-primary" id="saveBtn" onclick="saveAll()">Save All</button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-label">Selected Employee ID</div>
+              <div class="summary-value mono" id="selectedEmpId">—</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Monthly Records</div>
+              <div class="summary-value" id="selectedEmpRecords">0</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <div class="field">
+              <label for="newEmployeeName">Add New Employee</label>
+              <input
+                id="newEmployeeName"
+                class="input"
+                type="text"
+                placeholder="Enter new employee name"
+              />
+            </div>
+
+            <div class="toolbar">
+              <button class="btn btn-primary" onclick="addEmployee()">Add Employee</button>
+            </div>
+
+            <hr style="border:none;border-top:1px solid var(--border);margin:8px 0;" />
+
+            <div class="field">
+              <label for="editEmployeeName">Edit Selected Employee Name</label>
+              <input
+                id="editEmployeeName"
+                class="input"
+                type="text"
+                placeholder="Select an employee first"
+              />
+            </div>
+
+            <div class="toolbar">
+              <button class="btn btn-warning" onclick="renameEmployee()">Rename Employee</button>
+              <button class="btn btn-danger" onclick="deleteEmployee()">Delete Employee</button>
+            </div>
+
+            <div class="save-banner" id="saveBanner">Saved successfully.</div>
+
+            <div class="field">
+              <label>Quick Notes</label>
+              <div class="helper">
+                - New employees are created with 12 monthly rows for the current year.<br />
+                - “Save All” writes the full employee database back to Apps Script.<br />
+                - Employee IDs are derived from the employee name for clean keys.
+              </div>
+            </div>
+
+            <div class="months-box">
+              <h3>Selected Employee Months</h3>
+              <ul id="monthsPreview" class="month-list">
+                <li class="empty" style="padding:10px 0;">No employee selected.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Done</div>
+
+  <script>
+    /*************************************************
+     * CONFIG
+     * Replace with your deployed Apps Script URL
+     *************************************************/
+    const APP_SCRIPT_URL = "https://script.google.com/a/macros/qualtrics.com/s/AKfycbzWzIJyiknquP1qIBxXt5DEqR3JHqe4mz44EanGtit22hoTIkg7_CEvmD9rgqtA0htXLA/exec";
+
+    /*************************************************
+     * APP STATE
+     *************************************************/
+    let db = {};
+    let activeEmpId = "";
+    const MONTHS = [
+      'January','February','March','April','May','June',
+      'July','August','September','October','November','December'
+    ];
+
+    /*************************************************
+     * API HELPERS
+     *************************************************/
+    async function apiGet(params = {}) {
+      const url = new URL(APP_SCRIPT_URL);
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null) {
+          url.searchParams.set(key, params[key]);
+        }
+      });
+
+      const res = await fetch(url.toString(), {
+        method: 'GET',
+        redirect: 'follow'
+      });
+
+      if (!res.ok) {
+        throw new Error(`GET failed: ${res.status}`);
+      }
+
+      return await res.json();
+    }
+
+    async function apiPost(payload = {}) {
+      const res = await fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        throw new Error(`POST failed: ${res.status}`);
+      }
+
+      return await res.json();
+    }
+
+    /*************************************************
+     * HELPERS
+     *************************************************/
+    function showToast(message) {
+      const t = document.getElementById('toast');
+      t.textContent = message;
+      t.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => {
+        t.classList.remove('show');
+      }, 2200);
+    }
+
+    function showSaveBanner(message = "Saved successfully.") {
+      const el = document.getElementById('saveBanner');
+      el.textContent = message;
+      el.classList.add('show');
+      clearTimeout(showSaveBanner._timer);
+      showSaveBanner._timer = setTimeout(() => {
+        el.classList.remove('show');
+      }, 2600);
+    }
+
+    function setStatus(isOnline, text) {
+      const dot = document.getElementById('statusDot');
+      const txt = document.getElementById('statusText');
+      dot.className = 'dot ' + (isOnline ? 'online' : 'offline');
+      txt.textContent = text;
+    }
+
+    function normalizeName(name) {
+      return String(name || '')
+        .trim()
+        .replace(/\s+/g, ' ');
+    }
+
+    function slugifyEmployeeId(name) {
+      const clean = normalizeName(name)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+
+      return clean || ('employee_' + Date.now());
+    }
+
+    function getEmployeeName(empId) {
+      const rows = db[empId] || [];
+      if (!rows.length) return empId;
+      return rows[0].employee_name || empId;
+    }
+
+    function employeeExistsByName(name) {
+      const lower = normalizeName(name).toLowerCase();
+      return Object.keys(db).some(empId => getEmployeeName(empId).toLowerCase() === lower);
+    }
+
+    function createDefaultEmployeeRows(employeeName) {
+      const year = new Date().getFullYear();
+      return MONTHS.map(month => ({
+        employee_name: employeeName,
+        Month: month,
+        Year: year,
+        "Quality(%)": 0,
+        "Extra Processed counts": 0,
+        "Leaves": 0,
+        "no_of_WFH": 0,
+        "Pending(whole month)": 0,
+        "Number of days reached minimum count at 6pm": 0,
+        avg_6pm: 0,
+        days_below_bench: 0,
+        professionalism: "Average",
+        communication: "Average",
+        negative_remarks: "",
+        positive_remarks: "",
+        takeaway: ""
+      }));
+    }
+
+    function sortEmployeeIds(ids) {
+      return [...ids].sort((a, b) => {
+        return getEmployeeName(a).localeCompare(getEmployeeName(b));
+      });
+    }
+
+    /*************************************************
+     * LOAD + RENDER
+     *************************************************/
+    async function loadEmployees() {
+      try {
+        setStatus(false, 'Loading...');
+        const data = await apiGet({ action: 'get_data' });
+
+        db = (data && typeof data === 'object') ? data : {};
+
+        const ids = sortEmployeeIds(Object.keys(db));
+
+        if (ids.length && !db[activeEmpId]) {
+          activeEmpId = ids[0];
+        } else if (!ids.length) {
+          activeEmpId = "";
+        }
+
+        renderEmployeeList();
+        renderSelectedEmployee();
+        setStatus(true, 'Connected');
+      } catch (err) {
+        console.error(err);
+        setStatus(false, 'Connection failed');
+        document.getElementById('employeeList').innerHTML =
+          '<div class="empty">Unable to load employees. Check your Apps Script URL and deployment permissions.</div>';
+      }
+    }
+
+    function renderEmployeeList() {
+      const container = document.getElementById('employeeList');
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      const ids = sortEmployeeIds(Object.keys(db)).filter(empId => {
+        const name = getEmployeeName(empId).toLowerCase();
+        return name.includes(search) || empId.toLowerCase().includes(search);
+      });
+
+      document.getElementById('employeeCount').textContent =
+        `${Object.keys(db).length} employee${Object.keys(db).length === 1 ? '' : 's'}`;
+
+      if (!ids.length) {
+        container.innerHTML = '<div class="empty">No employees found.</div>';
+        return;
+      }
+
+      container.innerHTML = ids.map(empId => {
+        const name = getEmployeeName(empId);
+        const rows = db[empId] || [];
+        const latestYear = rows.length ? Math.max(...rows.map(r => Number(r.Year || 0))) : '—';
+
+        return `
+          <div class="emp-item ${empId === activeEmpId ? 'active' : ''}" onclick="selectEmployee('${escapeHtmlAttr(empId)}')">
+            <div class="emp-main">
+              <div class="emp-name">${escapeHtml(name)}</div>
+              <div class="emp-meta">
+                <span class="pill mono">${escapeHtml(empId)}</span>
+                <span>${rows.length} rows</span>
+                <span>Year: ${escapeHtml(String(latestYear))}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderSelectedEmployee() {
+      const idEl = document.getElementById('selectedEmpId');
+      const recordsEl = document.getElementById('selectedEmpRecords');
+      const nameInput = document.getElementById('editEmployeeName');
+      const monthsPreview = document.getElementById('monthsPreview');
+
+      if (!activeEmpId || !db[activeEmpId]) {
+        idEl.textContent = '—';
+        recordsEl.textContent = '0';
+        nameInput.value = '';
+        monthsPreview.innerHTML = '<li class="empty" style="padding:10px 0;">No employee selected.</li>';
+        return;
+      }
+
+      const rows = db[activeEmpId] || [];
+      const name = getEmployeeName(activeEmpId);
+
+      idEl.textContent = activeEmpId;
+      recordsEl.textContent = String(rows.length);
+      nameInput.value = name;
+
+      monthsPreview.innerHTML = rows.map(r => {
+        return `
+          <li class="month-item">
+            <span><strong>${escapeHtml(r.Month || '')}</strong></span>
+            <span class="muted">${escapeHtml(String(r.Year || ''))}</span>
+          </li>
+        `;
+      }).join('');
+    }
+
+    function selectEmployee(empId) {
+      if (!db[empId]) return;
+      activeEmpId = empId;
+      renderEmployeeList();
+      renderSelectedEmployee();
+    }
+
+    /*************************************************
+     * CRUD
+     *************************************************/
+    function addEmployee() {
+      const input = document.getElementById('newEmployeeName');
+      const employeeName = normalizeName(input.value);
+
+      if (!employeeName) {
+        showToast('Enter an employee name.');
+        input.focus();
+        return;
+      }
+
+      if (employeeExistsByName(employeeName)) {
+        showToast('Employee name already exists.');
+        return;
+      }
+
+      let empId = slugifyEmployeeId(employeeName);
+
+      if (db[empId]) {
+        empId = `${empId}_${Date.now()}`;
+      }
+
+      db[empId] = createDefaultEmployeeRows(employeeName);
+      activeEmpId = empId;
+      input.value = '';
+
+      renderEmployeeList();
+      renderSelectedEmployee();
+      showToast('Employee added. Click Save All.');
+    }
+
+    function renameEmployee() {
+      if (!activeEmpId || !db[activeEmpId]) {
+        showToast('Select an employee first.');
+        return;
+      }
+
+      const input = document.getElementById('editEmployeeName');
+      const newName = normalizeName(input.value);
+
+      if (!newName) {
+        showToast('Enter a valid employee name.');
+        return;
+      }
+
+      const oldId = activeEmpId;
+      const oldName = getEmployeeName(oldId);
+
+      if (newName.toLowerCase() === oldName.toLowerCase()) {
+        showToast('No changes to rename.');
+        return;
+      }
+
+      if (employeeExistsByName(newName)) {
+        showToast('Another employee already uses that name.');
+        return;
+      }
+
+      let newId = slugifyEmployeeId(newName);
+      if (newId !== oldId && db[newId]) {
+        newId = `${newId}_${Date.now()}`;
+      }
+
+      const rows = (db[oldId] || []).map(r => ({
+        ...r,
+        employee_name: newName
+      }));
+
+      delete db[oldId];
+      db[newId] = rows;
+      activeEmpId = newId;
+
+      renderEmployeeList();
+      renderSelectedEmployee();
+      showToast('Renamed. Click Save All.');
+    }
+
+    function deleteEmployee() {
+      if (!activeEmpId || !db[activeEmpId]) {
+        showToast('Select an employee first.');
+        return;
+      }
+
+      const name = getEmployeeName(activeEmpId);
+      const ok = confirm(`Delete employee "${name}" and all monthly records?`);
+      if (!ok) return;
+
+      delete db[activeEmpId];
+
+      const ids = sortEmployeeIds(Object.keys(db));
+      activeEmpId = ids[0] || '';
+
+      renderEmployeeList();
+      renderSelectedEmployee();
+      showToast('Deleted. Click Save All.');
+    }
+
+    /*************************************************
+     * SAVE
+     *************************************************/
+    async function saveAll() {
+      const btn = document.getElementById('saveBtn');
+      const original = btn.textContent;
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        const res = await apiPost({
+          action: 'save',
+          data: db
+        });
+
+        if (res && res.ok) {
+          showToast('Saved successfully');
+          showSaveBanner('Saved successfully to Google Sheets.');
+          await loadEmployees();
+        } else {
+          throw new Error(res?.error || 'Save failed');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Save failed');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    }
+
+    /*************************************************
+     * HEALTH CHECK
+     *************************************************/
+    async function checkStatus() {
+      try {
+        const res = await apiGet({ action: 'health' });
+        if (res && res.ok) {
+          setStatus(true, 'Connected');
+        } else {
+          setStatus(false, 'Offline');
+        }
+      } catch (err) {
+        setStatus(false, 'Offline');
+      }
+    }
+
+    /*************************************************
+     * ESCAPE HELPERS
+     *************************************************/
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeHtmlAttr(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    /*************************************************
+     * BOOT
+     *************************************************/
+    window.addEventListener('load', async () => {
+      if (!APP_SCRIPT_URL || APP_SCRIPT_URL.includes('PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE')) {
+        setStatus(false, 'Add Apps Script URL first');
+        document.getElementById('employeeList').innerHTML =
+          '<div class="empty">Please paste your deployed Apps Script web app URL into <strong>APP_SCRIPT_URL</strong> inside this HTML file.</div>';
+        return;
+      }
+
+      await loadEmployees();
+      setInterval(checkStatus, 15000);
+    });
+  </script>
+</body>
+</html>
