@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  SCRIPT_URL: "https://script.google.com/a/macros/qualtrics.com/s/AKfycbzWzIJyiknquP1qIBxXt5DEqR3JHqe4mz44EanGtit22hoTIkg7_CEvmD9rgqtA0htXLA/exec"
+  SCRIPT_URL: "https://script.google.com/a/macros/qualtrics.com/s/AKfycbxZ4poK0_yAIwzN1sZOCh_4qFA8s4uA_jeQemjSVl_q9h7fOgSFiG2vNDV2LhNwoC56rA/exec"
 };
