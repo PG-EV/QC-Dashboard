@@ -650,10 +650,11 @@
 
         nameMap = {};
         Object.keys(db).forEach(id => {
-          const firstRecord = db[id] && db[id][0];
-          if (firstRecord && firstRecord.employee_name){
-            nameMap[id] = firstRecord.employee_name;
-          }
+         const firstRecord = db[id][0];
+if (firstRecord && firstRecord.employee_name){
+  nameMap[id] = firstRecord.employee_name;
+}
+
         });
 
         if (Object.keys(db).length === 0){
